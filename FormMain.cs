@@ -55,10 +55,19 @@ namespace Att.AssemblyInformation
             int count = 1;
             foreach (AssemblyName name in names)
             {
+                StringBuilder buffer = new StringBuilder(16);
+                foreach (byte b in name.GetPublicKeyToken())
+                    buffer.AppendFormat("{0:X}", b);
+
+                if (buffer.Length == 0)
+                    buffer.Append("null");
+
+                string fullName = name.Name + ", Version=" + name.Version + ", PublicKeyToken=" + buffer.ToString().ToLower();
+                
                 if (count == names.Length)
-                    txtReferences.Text += name.Name;
+                    txtReferences.Text += fullName;
                 else
-                    txtReferences.Text += name.Name + Environment.NewLine;
+                    txtReferences.Text += fullName + Environment.NewLine;
 
                 count++;
             }
