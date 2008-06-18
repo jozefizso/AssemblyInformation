@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Att.AssemblyInformation</RootNamespace>
     <AssemblyName>Att.AssemblyInformation</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <StartupObject>
     </StartupObject>
@@ -40,18 +40,9 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Configuration.Install" />
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml.Linq">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data.DataSetExtensions">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -88,10 +79,19 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Installer1.resx">
       <DependentUpon>Installer1.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Att.AssemblyInformation.Setup\Att.AssemblyInformation.Setup.vdproj" />
+    <Content Include="Att.AssemblyInformation.Setup\Release\setup.exe" />
     <Content Include="help.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Att.AssemblyInformation.Setup\Release\Att.AssemblyInformation.Setup.msi" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Att.AssemblyInformation.Setup\Debug\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

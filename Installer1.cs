@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration.Install;
-using System.Linq;
 using Microsoft.Win32;
 using System.Windows.Forms;
 using System.Reflection;
