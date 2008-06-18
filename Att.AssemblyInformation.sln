@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Att.AssemblyInformation", "Att.AssemblyInformation.csproj", "{ED2CFF97-A61C-49EC-ACA4-A1564CD68449}"
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Att.AssemblyInformation.Setup", "Att.AssemblyInformation.Setup\Att.AssemblyInformation.Setup.vdproj", "{3855A033-CB2E-4942-B158-CBF09065AB27}"
-EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
 		SccNumberOfProjects = 3
@@ -26,10 +24,6 @@ Global
 		{ED2CFF97-A61C-49EC-ACA4-A1564CD68449}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED2CFF97-A61C-49EC-ACA4-A1564CD68449}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED2CFF97-A61C-49EC-ACA4-A1564CD68449}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3855A033-CB2E-4942-B158-CBF09065AB27}.Debug|Any CPU.ActiveCfg = Debug
-		{3855A033-CB2E-4942-B158-CBF09065AB27}.Debug|Any CPU.Build.0 = Debug
-		{3855A033-CB2E-4942-B158-CBF09065AB27}.Release|Any CPU.ActiveCfg = Release
-		{3855A033-CB2E-4942-B158-CBF09065AB27}.Release|Any CPU.Build.0 = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
