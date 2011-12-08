@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Att.AssemblyInformation", "Att.AssemblyInformation.csproj", "{ED2CFF97-A61C-49EC-ACA4-A1564CD68449}"
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Att.AssemblyInformation.Setup", "Att.AssemblyInformation.Setup\Att.AssemblyInformation.Setup.vdproj", "{181ED8C3-CAF1-4878-BEE9-4178CBD0F0D3}"
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Att.AssemblyInformation.Setup", "..\Att.AssemblyInformation.Setup\Att.AssemblyInformation.Setup.vdproj", "{181ED8C3-CAF1-4878-BEE9-4178CBD0F0D3}"
 EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
