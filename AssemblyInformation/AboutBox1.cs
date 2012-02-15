@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
 
-namespace Att.AssemblyInformation
+namespace AssemblyInformation
 {
     partial class AboutBox1 : Form
     {

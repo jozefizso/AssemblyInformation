@@ -1,0 +1,32 @@
+// AssemblyInformation.idl : IDL source for AssemblyInformation
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (AssemblyInformation.tlb) and marshalling code.
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	object,
+	uuid(9A4279DB-B18B-4BA5-AA50-7314AA73B634),
+	pointer_default(unique)
+]
+interface IAILoader : IUnknown{
+};
+[
+	uuid(B19979D1-BA8C-4385-9CAA-013190B7F3D9),
+	version(1.0),
+]
+library AssemblyInformationLib
+{
+	importlib("stdole2.tlb");
+	[
+		uuid(8AB81E72-CB2F-11D3-8D3B-AC2F34F1FA3C)		
+	]
+	coclass AILoader
+	{
+		[default] interface IAILoader;
+	};
+};
+

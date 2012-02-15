@@ -1,0 +1,43 @@
+HKCR
+{
+    NoRemove CLSID
+    {
+        ForceRemove {8AB81E72-CB2F-11D3-8D3B-AC2F34F1FA3C} = s 'AILoader Class'
+        {
+            InprocServer32 = s '%MODULE%'
+            {
+                val ThreadingModel = s 'Apartment'
+            }
+        }
+    }
+    NoRemove dllfile
+    {
+        NoRemove shellex
+        {
+            NoRemove ContextMenuHandlers
+            {
+                ForceRemove AILoader = s '{8AB81E72-CB2F-11D3-8D3B-AC2F34F1FA3C}'
+            }
+        }
+    }
+	NoRemove exefile
+    {
+        NoRemove shellex
+        {
+            NoRemove ContextMenuHandlers
+            {
+                ForceRemove AILoader = s '{8AB81E72-CB2F-11D3-8D3B-AC2F34F1FA3C}'
+            }
+        }
+    }
+    NoRemove ocxfile
+    {
+        NoRemove shellex
+        {
+            NoRemove ContextMenuHandlers
+            {
+                ForceRemove AILoader = s '{8AB81E72-CB2F-11D3-8D3B-AC2F34F1FA3C}'
+            }
+        }
+    }
+}

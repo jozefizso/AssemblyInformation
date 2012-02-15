@@ -1,42 +1,94 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using System.Windows.Forms;
 using System.Reflection;
+using System.Diagnostics;
 
-namespace Att.AssemblyInformation
+namespace AssemblyInformation
 {
     class Program
     {
-        private const string UsageString = @"Checks to see if an assembly is a debug build.
-        The argument should be the path of the assembly  to check";
-        public static Assembly assemb;
+        public const string ApplicationPathx86 = "AssemblyInformation.exe";
+        public const string ApplicationPathx64 = "AssemblyInformationX64.exe";
 
         [STAThread]
         static void Main(string[] args)
         {
             Application.ThreadException += ApplicationThreadException;
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomainTypeResolve;
+            
             if (args.Length == 1)
             {
                 string filePath = args.GetValue(0).ToString();
+                string assemblyullName = Path.GetFullPath(filePath);
+                bool? is64Bit = Platform.Is64BitAssembly(filePath);
+                bool filePathIs64Bit = (is64Bit.HasValue && is64Bit.Value);
+                bool currentProcessIs64Bit = Platform.IsRunningAs64Bit;
+
+                bool spanProcess = (currentProcessIs64Bit != filePathIs64Bit);
 
                 try
                 {
-                    string assemblyullName = Path.GetFullPath(filePath);
-                    //required to change directory for loading referenced assemblies
-                    Environment.CurrentDirectory = Path.GetDirectoryName(filePath);
-                    assemb = Assembly.LoadFile(assemblyullName);
+                    if (!spanProcess)
+                    {
+                        
+                        //required to change directory for loading referenced assemblies
+                        Environment.CurrentDirectory = Path.GetDirectoryName(filePath);
+                        Assembly assembly = Assembly.LoadFile(assemblyullName);
 
-                    Application.EnableVisualStyles();
-                    Application.SetCompatibleTextRenderingDefault(false);
-                    Application.Run(new FormMain(assemb));
+                        Application.EnableVisualStyles();
+                        Application.SetCompatibleTextRenderingDefault(false);
+                        Application.Run(new FormMain(assembly));
+                    }
+                    else
+                    {
+                        if(filePathIs64Bit && !Environment.Is64BitOperatingSystem)
+                        {
+                            MessageBox.Show(Resource.BitnessMismatch, Resource.AppName,
+                                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                        string launchPath = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
+                        Debug.Assert(launchPath != null);
+
+                        string otherBitnessPath = Path.Combine(launchPath, currentProcessIs64Bit ? ApplicationPathx86 : ApplicationPathx64);
+
+                        if(!File.Exists(otherBitnessPath))
+                        {
+                            MessageBox.Show(string.Format(Resource.FailedToLocateFile, otherBitnessPath), Resource.AppName,
+                                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                        
+
+                        var psi = new ProcessStartInfo();
+                        psi.FileName = otherBitnessPath;
+                        if (!assemblyullName.Contains(" "))
+                            psi.Arguments = args[0];
+                        else
+                            psi.Arguments = string.Format("\"{0}\"", assemblyullName);
+                        psi.UseShellExecute = true;
+                        var process = Process.Start(psi);
+                        //process.WaitForExit();
+                    }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(string.Format(@"Failed to load DLL.  Error was ""{0}""", ex.Message), "Error", MessageBoxButtons.OK);
+                    //if try to load win32 binary, then it will throw BadImageFormat exception...
+                    //which doesn't contain any HResult. So, just search for it.
+                    if (ex.Message.Contains(Resource.NotDotNetAssemblyErrorMessage) || ex.Message.Contains("0x80131018"))
+                    {
+                        MessageBox.Show(string.Format(Resource.NotDotNetAssembly, filePath), Resource.AppName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    else
+                    {
+                        MessageBox.Show(string.Format(Resource.LoadError, ex.Message), Resource.AppName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
+            }
+            else
+            {
+                MessageBox.Show(Resource.UsageString, Resource.AppName, MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
@@ -65,7 +117,7 @@ namespace Att.AssemblyInformation
 
         static void ApplicationThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
         {
-            MessageBox.Show(string.Format(@"Failed to load DLL.  Error was ""{0}""", e.Exception.Message), "Error", MessageBoxButtons.OK);
+            MessageBox.Show(string.Format(Resource.LoadError, e.Exception.Message), Resource.AppName, MessageBoxButtons.OK);
             Application.Exit();
         }
     }

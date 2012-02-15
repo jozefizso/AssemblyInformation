@@ -1,4 +1,4 @@
-﻿namespace Att.AssemblyInformation
+﻿namespace AssemblyInformation
 {
     partial class FormMain
     {
@@ -33,7 +33,10 @@
             this.lblCompilation = new System.Windows.Forms.Label();
             this.lblFullName = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
             this.dependencyTreeView = new System.Windows.Forms.TreeView();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.targetProcessorTextBox = new System.Windows.Forms.TextBox();
             this.assemblyKindTextBox = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -49,7 +52,11 @@
             this.aboutToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.DebuggableFlagsToolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.referenceListTextBox = new System.Windows.Forms.TextBox();
             this.panel1.SuspendLayout();
+            this.tabControl1.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            this.tabPage2.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -79,7 +86,7 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.dependencyTreeView);
+            this.panel1.Controls.Add(this.tabControl1);
             this.panel1.Controls.Add(this.targetProcessorTextBox);
             this.panel1.Controls.Add(this.assemblyKindTextBox);
             this.panel1.Controls.Add(this.label2);
@@ -98,17 +105,54 @@
             this.panel1.Size = new System.Drawing.Size(816, 408);
             this.panel1.TabIndex = 2;
             // 
+            // tabControl1
+            // 
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Location = new System.Drawing.Point(131, 171);
+            this.tabControl1.Multiline = true;
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(673, 237);
+            this.tabControl1.TabIndex = 12;
+            this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.dependencyTreeView);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(665, 211);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "Direct References";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
             // dependencyTreeView
             // 
             this.dependencyTreeView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.dependencyTreeView.Location = new System.Drawing.Point(132, 168);
+            this.dependencyTreeView.Location = new System.Drawing.Point(-3, 0);
             this.dependencyTreeView.Name = "dependencyTreeView";
-            this.dependencyTreeView.Size = new System.Drawing.Size(672, 237);
+            this.dependencyTreeView.Size = new System.Drawing.Size(669, 215);
             this.dependencyTreeView.TabIndex = 11;
             this.dependencyTreeView.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.DependencyTreeViewBeforeExpand);
             this.dependencyTreeView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.DependencyTreeViewMouseDoubleClick);
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.referenceListTextBox);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(665, 211);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "All Direct & Indirect References";
+            this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // targetProcessorTextBox
             // 
@@ -230,22 +274,34 @@
             this.aboutToolStripMenuItem1,
             this.exitToolStripMenuItem});
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(56, 20);
             this.aboutToolStripMenuItem.Text = "Options";
             // 
             // aboutToolStripMenuItem1
             // 
             this.aboutToolStripMenuItem1.Name = "aboutToolStripMenuItem1";
-            this.aboutToolStripMenuItem1.Size = new System.Drawing.Size(107, 22);
+            this.aboutToolStripMenuItem1.Size = new System.Drawing.Size(103, 22);
             this.aboutToolStripMenuItem1.Text = "About";
             this.aboutToolStripMenuItem1.Click += new System.EventHandler(this.AboutToolStripMenuItem1Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItemClick);
+            // 
+            // referenceListTextBox
+            // 
+            this.referenceListTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.referenceListTextBox.Location = new System.Drawing.Point(0, 0);
+            this.referenceListTextBox.Multiline = true;
+            this.referenceListTextBox.Name = "referenceListTextBox";
+            this.referenceListTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.referenceListTextBox.Size = new System.Drawing.Size(667, 215);
+            this.referenceListTextBox.TabIndex = 0;
             // 
             // FormMain
             // 
@@ -262,6 +318,10 @@
             this.Load += new System.EventHandler(this.FormMainLoad);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.tabControl1.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage2.ResumeLayout(false);
+            this.tabPage2.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -290,5 +350,9 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TreeView dependencyTreeView;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.TextBox referenceListTextBox;
     }
 }

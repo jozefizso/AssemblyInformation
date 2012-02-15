@@ -1,4 +1,4 @@
-﻿namespace Att.AssemblyInformation
+﻿namespace AssemblyInformation
 {
     partial class AboutBox1
     {

@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssemblyInformationX86", "AssemblyInformation\AssemblyInformationX86.csproj", "{ED2CFF97-A61C-49EC-ACA4-A1564CD68449}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssemblyInformationX64", "AssemblyInformation\AssemblyInformationX64.csproj", "{EDA25DBF-B43F-4370-BF0C-A680E5EA76D1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ED2CFF97-A61C-49EC-ACA4-A1564CD68449}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED2CFF97-A61C-49EC-ACA4-A1564CD68449}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED2CFF97-A61C-49EC-ACA4-A1564CD68449}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED2CFF97-A61C-49EC-ACA4-A1564CD68449}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EDA25DBF-B43F-4370-BF0C-A680E5EA76D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDA25DBF-B43F-4370-BF0C-A680E5EA76D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EDA25DBF-B43F-4370-BF0C-A680E5EA76D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDA25DBF-B43F-4370-BF0C-A680E5EA76D1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

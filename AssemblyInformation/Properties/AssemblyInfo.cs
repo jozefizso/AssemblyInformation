@@ -6,12 +6,12 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle(".NET Assembly Information")]
-[assembly: AssemblyDescription("Displays information on a .NET Assembly (DLL).  Developed by Rotem Bloom.  Version 1.1 supports .NET 4.0.\r\n\r\nContributed by Ashutosh Bhawasinka - Added Assembly Kind, target platform, dependency tree and launching Assembly Information for dependency.")]
+[assembly: AssemblyDescription("Displays information on a .NET Assembly (DLL).  Developed by Rotem Bloom.  Version 1.1 supports .NET 4.0.\r\n\r\nContributed by Ashutosh Bhawasinka (www.ashusoft.com) - Added Assembly Kind, target platform, dependency tree, recursive dependency list and launching Assembly Information for dependency.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Att.AssemblyInformation")]
-[assembly: AssemblyCopyright("Copyright ©  2008-2011")]
-[assembly: AssemblyTrademark("Dream Theater Rules")]
+[assembly: AssemblyProduct("AssemblyInformation")]
+[assembly: AssemblyCopyright("Copyright ©  Rotem Bloom & Ashutosh Bhawasinka 2008-2012")]
+[assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
