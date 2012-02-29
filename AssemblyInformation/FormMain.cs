@@ -262,6 +262,15 @@ namespace AssemblyInformation
                     stringBuilder.Append(dependency);
                     stringBuilder.Append(Environment.NewLine);
                 }
+				if(errors.Count >0)
+				{
+					stringBuilder.Append("-----------------ERRORS--------------");
+					foreach (string error in errors)
+					{
+						stringBuilder.Append(error);
+						stringBuilder.Append(Environment.NewLine);
+					}
+				}
                 referenceListTextBox.Text = stringBuilder.ToString();
             }
         }

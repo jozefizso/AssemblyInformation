@@ -81,6 +81,13 @@ namespace AssemblyInformation
                 }
                 //assemblyKindTextBox.Text = PortableExecutableKindsNames[portableExecutableKinds];
                 TargetProcessor = ImageFileMachineNames[imageFileMachine];
+
+                //Any CPU builds are reported as 32bit. 
+                //32bit builds will have more value for PortableExecutableKinds
+                if(imageFileMachine == ImageFileMachine.I386 && portableExecutableKinds == PortableExecutableKinds.ILOnly)
+                {
+                    TargetProcessor = "AnyCPU";
+                }
             }
             
             if (debugAttribute != null)
