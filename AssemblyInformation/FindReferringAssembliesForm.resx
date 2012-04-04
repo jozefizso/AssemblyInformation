@@ -117,38 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AnalyzingAssembly" xml:space="preserve">
-    <value>Analyzing assembly '{0}'</value>
-  </data>
-  <data name="AnalyzingFolder" xml:space="preserve">
-    <value>Finding binaries in '{0}'</value>
-  </data>
-  <data name="AppName" xml:space="preserve">
-    <value>Assembly Information</value>
-  </data>
-  <data name="BitnessMismatch" xml:space="preserve">
-    <value>Can not load 64bit assembly on 32bit operating system.</value>
-  </data>
-  <data name="FailedToListBinaries" xml:space="preserve">
-    <value>Failed to list binaries.</value>
-  </data>
-  <data name="FailedToLocateFile" xml:space="preserve">
-    <value>Failed to locate file {0}</value>
-  </data>
-  <data name="LoadError" xml:space="preserve">
-    <value>Failed to load DLL.  Error: {0}</value>
-  </data>
-  <data name="NotDotNetAssembly" xml:space="preserve">
-    <value>The assembly '{0}' is not a .Net assembly. Assembly Information supports only .Net assemblies/binaries.</value>
-  </data>
-  <data name="NotDotNetAssemblyErrorMessage" xml:space="preserve">
-    <value>The module was expected to contain an assembly manifest</value>
-  </data>
-  <data name="UsageString" xml:space="preserve">
-    <value>.NET Assembly Information
-Displays information on a .NET Assembly.  Developed by Rotem Bloom &amp; Ashutosh Bhawasinka.
-
-Usage:
-AssemblyInformation.exe &lt;assembly&gt;</value>
-  </data>
 </root>

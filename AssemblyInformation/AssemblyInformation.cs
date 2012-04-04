@@ -17,13 +17,10 @@ namespace AssemblyInformation
         public string AssemblyKind { get; private set; }
         public string TargetProcessor { get; private set; }
         public string AssemblyFullName { get; private set; }
+        public string FrameWorkVersion { get; private set; }
 
         public Assembly Assembly { get; private set; }
         public DebuggableAttribute.DebuggingModes? DebuggingFlags { get; private set; }
-
-        private bool bareMode;
-        Dictionary<string, int> assemblyMap = new Dictionary<string, int>();
-        private List<string> errors = new List<string>();
 
         static readonly Dictionary<PortableExecutableKinds, string> PortableExecutableKindsNames = new Dictionary<PortableExecutableKinds, string>();
         static readonly Dictionary<ImageFileMachine, string> ImageFileMachineNames = new Dictionary<ImageFileMachine, string>();
@@ -34,7 +31,8 @@ namespace AssemblyInformation
                                                                         "mscorlib",
                                                                         "Windows",
                                                                         "PresentationCore",
-                                                                        "PresentationFramework"
+                                                                        "PresentationFramework",
+                                                                        "Microsoft.VisualC"
                                                                     };
         static AssemblyInformationLoader ()
         {
@@ -47,8 +45,6 @@ namespace AssemblyInformation
             ImageFileMachineNames[ImageFileMachine.I386] = "Targets a 32-bit Intel processor.";
             ImageFileMachineNames[ImageFileMachine.IA64] = "Targets a 64-bit Intel processor.";
             ImageFileMachineNames[ImageFileMachine.AMD64] = "Targets a 64-bit AMD processor.";
-
-            
         }
 
         public AssemblyInformationLoader(Assembly assembly)
@@ -109,21 +105,42 @@ namespace AssemblyInformation
             }
 
             AssemblyFullName = Assembly.FullName;
+
+            FrameWorkVersion = Assembly.ImageRuntimeVersion;
+        }
+    }
+
+    class Binary
+    {
+        public string FullName { get; private set; }
+        public string DisplayName { get; private set; }
+        public string FullPath { get; private set; }
+        public bool IsSystemBinary { get; set; }
+
+        public Binary(AssemblyName assemblyName, string fullPath = null, bool isSystemBinary = false)
+        {
+            FullName = assemblyName.FullName;
+            DisplayName = assemblyName.Name;
+            FullPath = fullPath;
+            IsSystemBinary = isSystemBinary;
+        }
+
+        public Binary(AssemblyName assemblyName, Assembly assembly):this(assemblyName, assembly.Location, assembly.GlobalAssemblyCache)
+        {
         }
     }
 
     class DependencyWalker
     {
-        private bool bareMode;
-        readonly Dictionary<string, int> assemblyMap = new Dictionary<string, int>();
+        readonly Dictionary<string, Binary> assemblyMap = new Dictionary<string, Binary>();
         private readonly List<string> errors = new List<string>();
 
-        public List<string> FindDependencies(AssemblyName assemblyName, bool recursive, out List<string> loadErrors)
+        public IEnumerable<Binary> FindDependencies(AssemblyName assemblyName, bool recursive, out List<string> loadErrors)
         {
             loadErrors = new List<string>();
             assemblyMap.Clear();
             errors.Clear();
-            List<string> dependencies = new List<string>();
+            List<Binary> dependencies = new List<Binary>();
             
             Assembly assembly = FindAssembly(assemblyName);
             if (null == assembly) 
@@ -133,20 +150,28 @@ namespace AssemblyInformation
             else
             {
                 FindDependencies(assembly, recursive, 0);
-                dependencies.AddRange(assemblyMap.Keys);
-                dependencies.Sort();
+                dependencies.AddRange(assemblyMap.Values.OrderBy(p => p.FullName));
+            }
+
+            foreach (var dependency in dependencies)
+            {
+                Trace.WriteLine(String.Format("{0} => {1}", dependency.DisplayName, dependency.IsSystemBinary));
             }
             return dependencies;
         }
 
-        public List<string> FindDependencies(Assembly assembly, bool recursive, out List<string> loadErrors) 
+        public IEnumerable<Binary> FindDependencies(Assembly assembly, bool recursive, out List<string> loadErrors) 
         {
             loadErrors = new List<string>();
             assemblyMap.Clear();
             errors.Clear();
             FindDependencies(assembly, recursive, 0);
-            List<string> dependencies = new List<string>(assemblyMap.Keys);
-            dependencies.Sort();
+            List<Binary> dependencies = new List<Binary>(assemblyMap.Values).OrderBy(p => p.FullName).ToList();
+
+            foreach (var dependency in dependencies) 
+            {
+                Trace.WriteLine(String.Format("{0} => {1}", dependency.DisplayName, dependency.IsSystemBinary));
+            }
             return dependencies;
         }
 
@@ -214,33 +239,121 @@ namespace AssemblyInformation
             //}
         }   
 
-        public void FindDependencies(Assembly assembly, bool recursive, int level) 
+        private void FindDependencies(Assembly assembly, bool recursive, int level)
         {
             foreach (AssemblyName referencedAssembly in assembly.GetReferencedAssemblies()) 
             {
-                if (!bareMode) 
-                {
-                    if (assemblyMap.ContainsKey(referencedAssembly.FullName)) continue;
-                    assemblyMap[referencedAssembly.FullName] = 1;
-                }
-                else 
-                {
-                    if (assemblyMap.ContainsKey(referencedAssembly.Name)) continue;
-                    assemblyMap[referencedAssembly.Name] = 1;
-                }
+                string name = referencedAssembly.FullName;
 
+                if (assemblyMap.ContainsKey(name)) continue;
+                assemblyMap[name] = new Binary(referencedAssembly);
+                
                 if(AssemblyInformationLoader.SystemAssemblies.Where(p => referencedAssembly.FullName.StartsWith(p)).Count() >0)
+                {
+                    assemblyMap[name].IsSystemBinary = true;
                     continue;
+                }
 
                 if (recursive)
                 {
                     Assembly referredAssembly = FindAssembly(referencedAssembly);
-                    if (null != referredAssembly)
+                    
+                    if (null != referredAssembly )
                     {
+                        assemblyMap[name] = new Binary(referencedAssembly, referredAssembly);
                         FindDependencies(referredAssembly, true, ++level);
                     }
                 }
             }
         }   		
+
+        public IEnumerable<string> FindReferringAssemblies(Assembly testAssembly, string directory, bool recursive) 
+        {
+            List<string> referringAssemblies = new List<string>();
+            List<string> binaries = new List<string>();
+            try
+            {
+                ReferringAssemblyStatusChanged(this,
+                                               new ReferringAssemblyStatusChangeEventArgs
+                                                   {StatusText = "Finding all binaries"});
+                FindAssemblies(new DirectoryInfo(directory), binaries, recursive);
+            }
+            catch (Exception ex)
+            {
+                UpdateProgress(Resource.FailedToListBinaries, -2);
+                return null;
+            }
+
+            if (binaries.Count == 0) return referringAssemblies;
+            int baseDirPathLength = directory.Length;
+            if (!directory.EndsWith("\\")) baseDirPathLength++;
+
+            int i =0;
+            foreach (var binary in binaries)
+            {
+                string message = String.Format(Resource.AnalyzingAssembly, Path.GetFileName(binary));
+                int progress = (i++ * 100) / binaries.Count;
+                if (progress == 100) progress = 99;
+                if (!UpdateProgress(message, progress)) return referringAssemblies;
+
+                try 
+                {
+                    Assembly assembly = Assembly.LoadFile(binary);
+                    DependencyWalker dw = new DependencyWalker();
+                    List<string> loadErrors;
+                    var dependencies = dw.FindDependencies(assembly, false, out loadErrors);
+                    if (null == dependencies) continue;
+                    if (dependencies.Where(p => String.Compare(p.FullName, testAssembly.FullName, StringComparison.OrdinalIgnoreCase) == 0).Count() > 0) 
+                    {
+                        referringAssemblies.Add(binary.Remove(0, baseDirPathLength));
+                    }
+                    errors.AddRange(loadErrors);
+                }
+                catch (ArgumentException) { }
+                catch (FileLoadException) { }
+                catch (FileNotFoundException) { }
+                catch (BadImageFormatException) { }
+            }
+            
+            return referringAssemblies.OrderBy(p =>p);
+        }
+
+        void FindAssemblies(DirectoryInfo directoryInfo, List<string> binaries, bool recursive)
+        {
+            string message = string.Format(Resource.AnalyzingFolder, directoryInfo.Name);
+            if (!UpdateProgress(message, -1)) return;
+
+            binaries.AddRange(directoryInfo.GetFiles("*.dll").Select(fileInfo => fileInfo.FullName));
+            binaries.AddRange(directoryInfo.GetFiles("*.exe").Select(fileInfo => fileInfo.FullName));
+
+            if (recursive)
+            {
+                foreach (var directory in directoryInfo.GetDirectories())
+                {
+                    FindAssemblies(directory, binaries, true);
+                }
+            }
+        }
+
+        bool UpdateProgress(string message, int progress) 
+        {
+            if (null != ReferringAssemblyStatusChanged) 
+            {
+                var eventArg = new ReferringAssemblyStatusChangeEventArgs { StatusText = message, Progress = progress };
+                ReferringAssemblyStatusChanged(this, eventArg);
+                return !eventArg.Cancel;
+            }
+            return true;
+        }
+
+        public event EventHandler<ReferringAssemblyStatusChangeEventArgs> ReferringAssemblyStatusChanged;
+    }
+
+    class ReferringAssemblyStatusChangeEventArgs:EventArgs
+    {
+        public string StatusText { get; set; }
+        public int Progress { get; set; }
+        public bool Cancel { get; set; }
     }
 }
+

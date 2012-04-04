@@ -7,7 +7,6 @@ using System.Text;
 using System.Windows.Forms;
 using System.Reflection;
 using System.Diagnostics;
-using Att.AssemblyInformation;
 
 namespace AssemblyInformation
 {
@@ -21,12 +20,16 @@ namespace AssemblyInformation
 
         private readonly AssemblyInformationLoader assemblyInformation;
 
+	    private List<Binary> recursiveDependencies;
+
+	    private List<Binary> directDependencies;
+
         public FormMain(Assembly assemb)
         {
             InitializeComponent();
             _mAssembly = assemb;
             assemblyInformation = new AssemblyInformationLoader(assemb);
-
+            referringAssemblyFolderTextBox.Text = Path.GetDirectoryName(_mAssembly.Location);
             AssemblyFormMap[assemb.FullName] = this;
             FormClosing += FormMainFormClosing;
         }
@@ -93,14 +96,14 @@ namespace AssemblyInformation
                 txtEditAndContinue.BackColor = Color.Green;
             }
 
+		    frameWorkVersion.Text = assemblyInformation.FrameWorkVersion;
             txtFullName.Text = assemblyInformation.AssemblyFullName;
 
             DependencyWalker dependencyWalker = new DependencyWalker();
             List<string> errors;
-            List<string> dependencies = dependencyWalker.FindDependencies(_mAssembly, false, out errors);
+            directDependencies = dependencyWalker.FindDependencies(_mAssembly, false, out errors).ToList();
 
-            FillAssemblyReferences(dependencies);
-            
+            FillAssemblyReferences(directDependencies);
         }
 
         void FormMainFormClosing(object sender, FormClosingEventArgs e)
@@ -108,11 +111,16 @@ namespace AssemblyInformation
             AssemblyFormMap.Remove(_mAssembly.FullName);
         }
 
-        private void FillAssemblyReferences(IEnumerable<string> dependencies, TreeNode treeNode = null)
+		private void FillAssemblyReferences(IEnumerable<Binary> dependencies, TreeNode treeNode = null)
         {
-            foreach (var assemblyName in dependencies)
+			foreach (var binary in dependencies)
             {
+                if(hideGACAssembliesToolStripMenuItem.Checked && binary.IsSystemBinary) continue;
+			    string assemblyName = showAssemblyFullNameToolStripMenuItem.Checked
+			                              ? binary.FullName
+			                              : binary.DisplayName;
                 TreeNode node = new TreeNode(assemblyName);
+			    node.Tag = binary;
 
                 if (treeNode == null)
                 {
@@ -178,7 +186,16 @@ namespace AssemblyInformation
             var node = dependencyTreeView.SelectedNode;
             if (null != node)
             {
-                string assemblyName = node.Text;
+			    Binary binary = node.Tag as Binary;
+			    if (null != binary)
+			    {
+                    LoadAssemblyInformationForAssembly(binary.FullName);
+			    }
+			}
+		}
+
+        private static string LoadAssemblyInformationForAssembly(string assemblyName) 
+        {
                 int retryCount = 0;
                 while (retryCount < 2)
                 {
@@ -222,7 +239,7 @@ namespace AssemblyInformation
                     }
                     catch (Exception) { }
                 }
-            }
+            return assemblyName;
         }
 
         private void DependencyTreeViewBeforeExpand(object sender, TreeViewCancelEventArgs e)
@@ -230,9 +247,10 @@ namespace AssemblyInformation
             if(null != e && null != e.Node && e.Node.Nodes.Count == 1 && e.Node.Nodes[0].Text == Loading)
             {
                 e.Node.Nodes.Clear();
-                string assemblyName = e.Node.Text;
+			    Binary binary = e.Node.Tag as Binary;
+                if(binary == null) return;
 
-                if (AssemblyInformationLoader.SystemAssemblies.Where(p => assemblyName.StartsWith(p)).Count() > 0)
+                if (AssemblyInformationLoader.SystemAssemblies.Where(p => binary.FullName.StartsWith(p)).Count() > 0)
                 {
                     e.Node.Nodes.Clear();
                     return;
@@ -240,8 +258,8 @@ namespace AssemblyInformation
 
                 DependencyWalker dependencyWalker = new DependencyWalker();
                 List<string> errors;
-                List<string> referredAssemblies =
-                    dependencyWalker.FindDependencies(new AssemblyName(assemblyName), false,
+                var referredAssemblies =
+                    dependencyWalker.FindDependencies(new AssemblyName(binary.FullName), false,
                                                       out errors);
 
                 FillAssemblyReferences(referredAssemblies, e.Node);
@@ -250,29 +268,123 @@ namespace AssemblyInformation
 
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e) 
         {
-            if(tabControl1.SelectedIndex ==1 && String.IsNullOrWhiteSpace(referenceListTextBox.Text))
+			if(tabControl1.SelectedIndex ==1 && referenceListListBox.Items.Count == 0)
+			{
+				FillRecursiveDependency();
+			}
+		}
+
+	    private void FillRecursiveDependency()
+	    {
+            if (null == recursiveDependencies)
             {
                 DependencyWalker dependencyWalker = new DependencyWalker();
                 List<string> errors;
-                List<string> dependencies = dependencyWalker.FindDependencies(_mAssembly, true, out errors);
-                StringBuilder stringBuilder = new StringBuilder();
-
-                foreach (string dependency in dependencies)
+                System.Windows.Forms.Cursor existingCursor = Cursor;
+                try
                 {
-                    stringBuilder.Append(dependency);
-                    stringBuilder.Append(Environment.NewLine);
+                    this.Cursor = Cursors.WaitCursor;
+                    recursiveDependencies = dependencyWalker.FindDependencies(_mAssembly, true, out errors).ToList();
+                }
+                finally
+                {
+                    this.Cursor = existingCursor;
+                }
+
+                referenceListListBox.Items.Clear();
+                foreach (var dependency in recursiveDependencies)
+                {
+                    if (hideGACAssembliesToolStripMenuItem.Checked && dependency.IsSystemBinary)
+                        continue;
+                    referenceListListBox.Items.Add(showAssemblyFullNameToolStripMenuItem.Checked?
+                        dependency.FullName:
+                        dependency.DisplayName);
                 }
 				if(errors.Count >0)
 				{
-					stringBuilder.Append("-----------------ERRORS--------------");
+                    referenceListListBox.Items.Add("");
+                    referenceListListBox.Items.Add("-----------------ERRORS--------------");
 					foreach (string error in errors)
 					{
-						stringBuilder.Append(error);
-						stringBuilder.Append(Environment.NewLine);
+                        referenceListListBox.Items.Add(error);
+                    }
+                }
+            }
+            else
+            {
+                referenceListListBox.Items.Clear();
+                foreach (var dependency in recursiveDependencies) 
+                {
+                    if (hideGACAssembliesToolStripMenuItem.Checked && dependency.IsSystemBinary)
+                        continue;
+                    referenceListListBox.Items.Add(showAssemblyFullNameToolStripMenuItem.Checked ?
+                        dependency.FullName :
+                        dependency.DisplayName);
+                }
+            }
+	    }
+
+	    private void referringAssemblyFolderSearchButton_Click(object sender, EventArgs e)
+		{
+			if (!String.IsNullOrWhiteSpace(referringAssemblyFolderTextBox.Text) &&
+                Directory.Exists(referringAssemblyFolderTextBox.Text))
+			{
+                FindReferringAssembliesForm frm = new FindReferringAssembliesForm();
+                frm.DirectoryPath = referringAssemblyFolderTextBox.Text;
+                frm.TestAssembly = _mAssembly;
+                frm.Recursive = true;
+                if (frm.ShowDialog() == DialogResult.OK) 
+                {
+                    var binaries = frm.ReferringAssemblies;
+                    if (null == binaries) return;
+                    referringAssembliesListtBox.Items.Clear();
+                    foreach (var binary in binaries)
+                    {
+                        referringAssembliesListtBox.Items.Add(binary);
 					}
 				}
-                referenceListTextBox.Text = stringBuilder.ToString();
+			}
+		}
+
+        private void referringAssemblyBrowseFolderButton_Click(object sender, EventArgs e) 
+        {
+            FolderBrowserDialog dlg = new FolderBrowserDialog();
+            if (dlg.ShowDialog() == DialogResult.OK) 
+            {
+                referringAssemblyFolderTextBox.Text = dlg.SelectedPath;
             }
+        }
+
+        private void AssemblyListBoxMouseDoubleClick(object sender, MouseEventArgs e) 
+        {
+            ListBox listBox = sender as ListBox;
+            if (null == listBox || null == listBox.SelectedItem) return;
+
+            var selectedAssembly = listBox.SelectedItem.ToString();
+            if (!selectedAssembly.Contains("ERROR")) 
+            {
+                LoadAssemblyInformationForAssembly(selectedAssembly);
+            }
+        }
+
+        private void hideGACAssembliesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            hideGACAssembliesToolStripMenuItem.Checked = !hideGACAssembliesToolStripMenuItem.Checked;
+            dependencyTreeView.Nodes.Clear();
+            FillAssemblyReferences(directDependencies);
+            if(recursiveDependencies != null)
+                FillRecursiveDependency();
+        }
+
+        private void showAssemblyFullNameToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            showAssemblyFullNameToolStripMenuItem.Checked =
+                !showAssemblyFullNameToolStripMenuItem.Checked;
+
+            dependencyTreeView.Nodes.Clear();
+            FillAssemblyReferences(directDependencies);
+            if (recursiveDependencies != null)
+                FillRecursiveDependency();
         }
     }
 

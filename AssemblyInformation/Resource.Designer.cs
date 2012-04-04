@@ -61,6 +61,24 @@ namespace AssemblyInformation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Analyzing assembly &apos;{0}&apos;.
+        /// </summary>
+        internal static string AnalyzingAssembly {
+            get {
+                return ResourceManager.GetString("AnalyzingAssembly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Finding binaries in &apos;{0}&apos;.
+        /// </summary>
+        internal static string AnalyzingFolder {
+            get {
+                return ResourceManager.GetString("AnalyzingFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Assembly Information.
         /// </summary>
         internal static string AppName {
@@ -75,6 +93,15 @@ namespace AssemblyInformation {
         internal static string BitnessMismatch {
             get {
                 return ResourceManager.GetString("BitnessMismatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to list binaries..
+        /// </summary>
+        internal static string FailedToListBinaries {
+            get {
+                return ResourceManager.GetString("FailedToListBinaries", resourceCulture);
             }
         }
         
