@@ -145,7 +145,7 @@ namespace AssemblyInformation
 
         private void AboutToolStripMenuItem1Click(object sender, EventArgs e)
         {
-            AboutBox1 about = new AboutBox1();
+            AboutBox about = new AboutBox();
             about.ShowDialog();
         }
 
