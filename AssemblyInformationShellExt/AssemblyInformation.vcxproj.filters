@@ -31,9 +31,6 @@
     <ClCompile Include="AILoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Visual Studio 2008\Projects\Common\CPP\Debug.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -49,9 +46,6 @@
       <Filter>Generated Files</Filter>
     </ClInclude>
     <ClInclude Include="AILoader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Visual Studio 2008\Projects\Common\CPP\Debug.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

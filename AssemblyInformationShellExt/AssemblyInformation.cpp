@@ -6,7 +6,9 @@
 #include "AssemblyInformation_i.h"
 #include "atlbase.h"
 #include "AILoader.h"
-#include "M:\Ashutosh\My Documents\Visual Studio 2008\Projects\Common\CPP\Debug.h"
+// #include "M:\Ashutosh\My Documents\Visual Studio 2008\Projects\Common\CPP\Debug.h"
+#define TRACE_FUNCTION(...)
+#define Debug(...)
 
 using namespace ATL;
 class CComModule _AtlModule;
@@ -24,9 +26,9 @@ HMODULE GetCurrentModule()
 }
 
 #ifdef TARGET_X64
-#define ASSEMBLY_INFORMATION_EXE _T("AssemblyInformationX64.exe")
+#define ASSEMBLY_INFORMATION_EXE _T("AssemblyInformation64.exe")
 #else
-#define ASSEMBLY_INFORMATION_EXE _T("AssemblyInformation.exe")
+#define ASSEMBLY_INFORMATION_EXE _T("AssemblyInformation32.exe")
 #endif
 // DLL Entry Point
 extern "C" BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved)

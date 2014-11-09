@@ -6,7 +6,9 @@
 #include "AILoader.h"
 #include "AssemblyInformation_i.h"
 //#include "ProgressDlg.h"
-#include "M:\Ashutosh\My Documents\Visual Studio 2008\Projects\Common\CPP\Debug.h"
+//#include "M:\Ashutosh\My Documents\Visual Studio 2008\Projects\Common\CPP\Debug.h"
+
+#define TRACE_FUNCTION(...)
 
 TCHAR CAILoader::szAIAppPath[_MAX_ENV];
 
