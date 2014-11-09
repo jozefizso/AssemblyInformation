@@ -5,24 +5,32 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace AssemblyInformation 
+namespace AssemblyInformation
 {
-    class AssemblyInformationLoader 
+    internal class AssemblyInformationLoader
     {
         public bool JitTrackingEnabled { get; private set; }
+
         public bool JitOptimized { get; private set; }
+
         public bool IgnoreSymbolStoreSequencePoints { get; private set; }
+
         public bool EditAndContinueEnabled { get; private set; }
+
         public string AssemblyKind { get; private set; }
+
         public string TargetProcessor { get; private set; }
+
         public string AssemblyFullName { get; private set; }
+
         public string FrameWorkVersion { get; private set; }
 
         public Assembly Assembly { get; private set; }
+
         public DebuggableAttribute.DebuggingModes? DebuggingFlags { get; private set; }
 
-        static readonly Dictionary<PortableExecutableKinds, string> PortableExecutableKindsNames = new Dictionary<PortableExecutableKinds, string>();
-        static readonly Dictionary<ImageFileMachine, string> ImageFileMachineNames = new Dictionary<ImageFileMachine, string>();
+        private static readonly Dictionary<PortableExecutableKinds, string> PortableExecutableKindsNames = new Dictionary<PortableExecutableKinds, string>();
+        private static readonly Dictionary<ImageFileMachine, string> ImageFileMachineNames = new Dictionary<ImageFileMachine, string>();
 
         public static readonly List<string> SystemAssemblies = new List<string>()
                                                                     {
@@ -52,39 +60,39 @@ namespace AssemblyInformation
             LoadInformation();
         }
 
-        void LoadInformation()
+        private void LoadInformation()
         {
             DebuggableAttribute debugAttribute = Assembly.GetCustomAttributes(false).OfType<DebuggableAttribute>().FirstOrDefault();
 
             var modules = Assembly.GetModules(false);
-            if (modules.Length > 0) 
+            if (modules.Length > 0)
             {
                 PortableExecutableKinds portableExecutableKinds;
                 ImageFileMachine imageFileMachine;
                 modules[0].GetPEKind(out portableExecutableKinds, out imageFileMachine);
 
-                foreach (PortableExecutableKinds kind in Enum.GetValues(typeof(PortableExecutableKinds))) 
+                foreach (PortableExecutableKinds kind in Enum.GetValues(typeof(PortableExecutableKinds)))
                 {
-                    if ((portableExecutableKinds & kind) == kind && kind != PortableExecutableKinds.NotAPortableExecutableImage) 
+                    if ((portableExecutableKinds & kind) == kind && kind != PortableExecutableKinds.NotAPortableExecutableImage)
                     {
-                        if (!String.IsNullOrEmpty(AssemblyKind)) 
+                        if (!String.IsNullOrEmpty(AssemblyKind))
                         {
                             AssemblyKind += Environment.NewLine;
                         }
                         AssemblyKind += "- " + PortableExecutableKindsNames[kind];
                     }
                 }
-                //assemblyKindTextBox.Text = PortableExecutableKindsNames[portableExecutableKinds];
+                ////assemblyKindTextBox.Text = PortableExecutableKindsNames[portableExecutableKinds];
                 TargetProcessor = ImageFileMachineNames[imageFileMachine];
 
-                //Any CPU builds are reported as 32bit. 
-                //32bit builds will have more value for PortableExecutableKinds
-                if(imageFileMachine == ImageFileMachine.I386 && portableExecutableKinds == PortableExecutableKinds.ILOnly)
+                // Any CPU builds are reported as 32bit.
+                // 32bit builds will have more value for PortableExecutableKinds
+                if (imageFileMachine == ImageFileMachine.I386 && portableExecutableKinds == PortableExecutableKinds.ILOnly)
                 {
                     TargetProcessor = "AnyCPU";
                 }
             }
-            
+
             if (debugAttribute != null)
             {
                 JitTrackingEnabled = debugAttribute.IsJITTrackingEnabled;
@@ -94,8 +102,9 @@ namespace AssemblyInformation
 
                 DebuggingFlags = debugAttribute.DebuggingFlags;
             }
-            else  // No DebuggableAttribute means IsJITTrackingEnabled=false, IsJITOptimizerDisabled=false, IgnoreSymbolStoreSequencePoints=false, EnableEditAndContinue=false
+            else
             {
+                // No DebuggableAttribute means IsJITTrackingEnabled=false, IsJITOptimizerDisabled=false, IgnoreSymbolStoreSequencePoints=false, EnableEditAndContinue=false
                 JitTrackingEnabled = false;
                 JitOptimized = true;
                 IgnoreSymbolStoreSequencePoints = false;
@@ -109,7 +118,7 @@ namespace AssemblyInformation
         }
     }
 
-    class Binary
+    internal class Binary
     {
         public string FullName { get; private set; }
         public string DisplayName { get; private set; }
@@ -129,9 +138,9 @@ namespace AssemblyInformation
         }
     }
 
-    class DependencyWalker
+    internal class DependencyWalker
     {
-        readonly Dictionary<string, Binary> assemblyMap = new Dictionary<string, Binary>();
+        private readonly Dictionary<string, Binary> assemblyMap = new Dictionary<string, Binary>();
         private readonly List<string> errors = new List<string>();
 
         public IEnumerable<Binary> FindDependencies(AssemblyName assemblyName, bool recursive, out List<string> loadErrors)
@@ -140,9 +149,9 @@ namespace AssemblyInformation
             assemblyMap.Clear();
             errors.Clear();
             List<Binary> dependencies = new List<Binary>();
-            
+
             Assembly assembly = FindAssembly(assemblyName);
-            if (null == assembly) 
+            if (null == assembly)
             {
                 errors.Add("Failed to load: " + assemblyName.FullName);
             }
@@ -348,10 +357,12 @@ namespace AssemblyInformation
         public event EventHandler<ReferringAssemblyStatusChangeEventArgs> ReferringAssemblyStatusChanged;
     }
 
-    class ReferringAssemblyStatusChangeEventArgs:EventArgs
+    internal class ReferringAssemblyStatusChangeEventArgs : EventArgs
     {
         public string StatusText { get; set; }
+
         public int Progress { get; set; }
+
         public bool Cancel { get; set; }
     }
 }
