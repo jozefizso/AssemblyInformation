@@ -1,0 +1,33 @@
+#
+# Assembly Information project
+# AppVeyor configuration
+#
+
+version: 2.1.0.{build}
+
+branches:
+  except:
+    - gh-pages
+
+os: Windows Server 2012
+
+matrix:
+  fast_finish: true     # true => immediately finish build once one of the jobs fails
+
+platform:
+  - x86
+  - x64
+configuration:
+  - Debug
+  - Release
+
+build:
+  project: AssemblyInformation.sln
+  verbosity: detailed
+
+assembly_info:
+  patch: true
+  file: AssemblyInfo.*
+  assembly_version: "{version}"
+  assembly_file_version: "{version}"
+  assembly_informational_version: "{version}"
