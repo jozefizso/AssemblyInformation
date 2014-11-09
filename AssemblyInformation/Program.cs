@@ -8,8 +8,8 @@ namespace AssemblyInformation
 {
     class Program
     {
-        public const string ApplicationPathx86 = "AssemblyInformation.exe";
-        public const string ApplicationPathx64 = "AssemblyInformationX64.exe";
+        public const string ApplicationPathx86 = "AssemblyInformation32.exe";
+        public const string ApplicationPathx64 = "AssemblyInformation64.exe";
 
         [STAThread]
         static void Main(string[] args)
