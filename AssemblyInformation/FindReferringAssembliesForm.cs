@@ -1,86 +1,96 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace AssemblyInformation 
+namespace AssemblyInformation
 {
-    public partial class FindReferringAssembliesForm : Form 
+    public partial class FindReferringAssembliesForm : Form
     {
-        public Assembly TestAssembly { get; set; }
-        public string DirectoryPath { get; set; }
-        public bool Recursive { get; set; }
+        private bool cancel;
 
-        private bool cancel = false;
-        public IEnumerable<string> ReferringAssemblies { get; set; }
-        public FindReferringAssembliesForm() 
+        public FindReferringAssembliesForm()
         {
-            InitializeComponent();
+            this.InitializeComponent();
             messageLabel.Text = "";
         }
 
-        private void FindReferringAssembliesForm_Load(object sender, EventArgs e) 
+        public Assembly TestAssembly { get; set; }
+
+        public string DirectoryPath { get; set; }
+
+        public bool Recursive { get; set; }
+
+        public IEnumerable<string> ReferringAssemblies { get; set; }
+
+        private void FindReferringAssembliesForm_Load(object sender, EventArgs e)
         {
-            (new Thread(FindThread)).Start();
+            (new Thread(this.FindThread)).Start();
         }
 
-        private void cancelButton_Click(object sender, EventArgs e) 
+        private void cancelButton_Click(object sender, EventArgs e)
         {
-            cancel = true;
+            this.cancel = true;
             cancelButton.Enabled = false;
         }
 
-        void FindThread() 
+        private void FindThread()
         {
             DependencyWalker dw = null;
-            try 
+            try
             {
                 dw = new DependencyWalker();
-                dw.ReferringAssemblyStatusChanged += UpdateStatus;
-                ReferringAssemblies = dw.FindReferringAssemblies(TestAssembly, DirectoryPath, Recursive);
-                UpdateStatus(this, new ReferringAssemblyStatusChangeEventArgs { StatusText = "", Progress = -3 });
+                dw.ReferringAssemblyStatusChanged += this.UpdateStatus;
+                this.ReferringAssemblies = dw.FindReferringAssemblies(this.TestAssembly, this.DirectoryPath, this.Recursive);
+                this.UpdateStatus(this, new ReferringAssemblyStatusChangeEventArgs { StatusText = "", Progress = -3 });
             }
-            catch(Exception ex)
+            catch (Exception)
             {
-                UpdateStatus(this, new ReferringAssemblyStatusChangeEventArgs { StatusText = Resource.FailedToListBinaries, Progress = -2 });
+                this.UpdateStatus(this, new ReferringAssemblyStatusChangeEventArgs { StatusText = Resource.FailedToListBinaries, Progress = -2 });
             }
             finally
             {
-                if(null != dw)
-                    dw.ReferringAssemblyStatusChanged -= UpdateStatus;
+                if (null != dw)
+                {
+                    dw.ReferringAssemblyStatusChanged -= this.UpdateStatus;
+                }
             }
         }
-        void UpdateStatus(object sender, ReferringAssemblyStatusChangeEventArgs e) 
-        {
-            if (InvokeRequired) 
-            {
-                Invoke(new EventHandler<ReferringAssemblyStatusChangeEventArgs>(UpdateStatus), sender, e);
-                return;
-            }
-            messageLabel.Text = e.StatusText;
-            
-            if (e.Progress >= 0) progressBar1.Value = e.Progress;
 
-            if (e.Progress == -1) 
+        private void UpdateStatus(object sender, ReferringAssemblyStatusChangeEventArgs e)
+        {
+            if (this.InvokeRequired)
             {
-                
+                this.Invoke(new EventHandler<ReferringAssemblyStatusChangeEventArgs>(this.UpdateStatus), sender, e);
+                return;
             }
-            else if (e.Progress == -2) 
+
+            messageLabel.Text = e.StatusText;
+
+            if (e.Progress >= 0)
             {
-                DialogResult = DialogResult.Cancel;
+                progressBar1.Value = e.Progress;
+            }
+
+            if (e.Progress == -1)
+            {
+            }
+            else if (e.Progress == -2)
+            {
+                this.DialogResult = DialogResult.Cancel;
                 MessageBox.Show(Resource.AppName, e.StatusText, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                Close();
+                this.Close();
                 return;
             }
-            else if (e.Progress == -3) 
+            else if (e.Progress == -3)
             {
-                DialogResult = DialogResult.OK;
-                Close();
+                this.DialogResult = DialogResult.OK;
+                this.Close();
                 return;
             }
-            e.Cancel = cancel;
+
+            e.Cancel = this.cancel;
         }
     }
 }
