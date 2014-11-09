@@ -38,6 +38,14 @@ namespace AssemblyInformation
         /// </summary>
         private const int PE_HEADER_LITTLE_ENDIAN = 0x00004550;
 
+        public static bool IsRunningAs64Bit
+        {
+            get
+            {
+                return Environment.Is64BitProcess;
+            }
+        }
+
         public static MachineType GetDllMachineType(string dllPath)
         {
             // see http://www.microsoft.com/whdc/system/platform/firmware/PECOFF.mspx
@@ -81,14 +89,6 @@ namespace AssemblyInformation
                     return false;
                 default:
                     return null;
-            }
-        }
-
-        public static bool IsRunningAs64Bit
-        {
-            get
-            {
-                return Environment.Is64BitProcess;
             }
         }
     }
