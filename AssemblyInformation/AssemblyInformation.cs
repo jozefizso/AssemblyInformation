@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Reflection;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 
 namespace AssemblyInformation 
 {
@@ -356,4 +355,3 @@ namespace AssemblyInformation
         public bool Cancel { get; set; }
     }
 }
-

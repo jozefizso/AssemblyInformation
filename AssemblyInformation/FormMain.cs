@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Text;
-using System.Windows.Forms;
+using System.Linq;
 using System.Reflection;
-using System.Diagnostics;
+using System.Windows.Forms;
 
 namespace AssemblyInformation
 {
