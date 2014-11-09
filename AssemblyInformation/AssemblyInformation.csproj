@@ -97,12 +97,6 @@
     <Compile Include="FormMain.Designer.cs">
       <DependentUpon>FormMain.cs</DependentUpon>
     </Compile>
-    <Compile Include="Installer1.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Installer1.Designer.cs">
-      <DependentUpon>Installer1.cs</DependentUpon>
-    </Compile>
     <Compile Include="Platform.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -122,10 +116,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FormMain.resx">
       <DependentUpon>FormMain.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Installer1.resx">
-      <DependentUpon>Installer1.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resource.resx">
